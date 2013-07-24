@@ -1,0 +1,32 @@
+{
+  "name": "github-avatar",
+  "version": "0.0.0",
+  "description": "fetch the github avatar image for a user",
+  "main": "index.js",
+  "dependencies": {
+    "JSONStream": "~0.6.4",
+    "concat-stream": "~1.0.0",
+    "hyperquest": "~0.1.7",
+    "through": "~2.3.4"
+  },
+  "devDependencies": {
+    "level": "~0.10.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/substack/github-avatar.git"
+  },
+  "homepage": "https://github.com/substack/github-avatar",
+  "keywords": [
+    "github",
+    "gravatar",
+    "avatar",
+    "jpg"
+  ],
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  },
+  "license": "MIT"
+}
