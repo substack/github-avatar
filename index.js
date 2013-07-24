@@ -14,7 +14,11 @@ module.exports = function (user, opts) {
     var output = through();
     if (db) {
         db.get(user, function (err, u) {
-            if (u && u.id && u.size === size && Date.now() - u.last < MAX_AGE) {
+            if (typeof u === 'string') {
+                try { u = JSON.parse(u) }
+                catch (err) { return output.emit('error', err) }
+            }
+            if (u && u.id && u.size === size && Date.now() - u.last < maxAge) {
                 output.queue(Buffer(u.data, 'base64'));
                 output.queue(null);
             }
@@ -52,12 +56,16 @@ module.exports = function (user, opts) {
         hq.on('error', output.emit.bind(output, 'error'));
         hq.pipe(output);
         hq.pipe(concat(function (body) {
-            if (ok && db) db.put(user, {
+            var row = {
                 id: id,
                 last: Date.now(),
                 data: body.toString('base64'),
                 size: size
-            });
+            };
+            if (db.options && db.options.valueEncoding !== 'json') {
+                row = JSON.stringify(row);
+            }
+            if (ok && db) db.put(user, row);
         }));
         return hq;
     }
