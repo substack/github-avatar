@@ -62,7 +62,7 @@ module.exports = function (user, opts) {
                 data: body.toString('base64'),
                 size: size
             };
-            if (db.options && db.options.valueEncoding !== 'json') {
+            if (db && db.options && db.options.valueEncoding !== 'json') {
                 row = JSON.stringify(row);
             }
             if (ok && db) db.put(user, row);
