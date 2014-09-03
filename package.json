@@ -1,6 +1,6 @@
 {
   "name": "github-avatar",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "fetch the github avatar image for a user",
   "main": "index.js",
   "dependencies": {
