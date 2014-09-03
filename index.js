@@ -33,7 +33,11 @@ module.exports = function (user, opts) {
     return output;
     
     function getId (cb) {
-        var hq = hyperquest('https://api.github.com/users/' + user);
+        var hq = hyperquest('https://api.github.com/users/' + user, {
+            headers: {
+                'User-Agent': 'github-avatar'
+            }
+        });
         hq.on('error', output.emit.bind(output, 'error'));
         
         var parser = JSONStream.parse([ 'gravatar_id' ]);
