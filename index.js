@@ -10,7 +10,7 @@ module.exports = function (user, opts) {
         ? opts.maxAge : 3 * 24 * 60 * 60 * 1000
     ;
     var db = opts.db;
-    
+
     var output = through();
     if (db) {
         db.get(user, function (err, u) {
@@ -25,34 +25,34 @@ module.exports = function (user, opts) {
             else if (u && u.id) {
                 getImage(u.id);
             }
-            else getId(getImage);
+            else getUrl(getImage);
         });
     }
-    else getId(getImage);
-    
+    else getUrl(getImage);
+
     return output;
-    
-    function getId (cb) {
+
+    function getUrl (cb) {
         var hq = hyperquest('https://api.github.com/users/' + user, {
             headers: {
                 'User-Agent': 'github-avatar'
             }
         });
         hq.on('error', output.emit.bind(output, 'error'));
-        
-        var parser = JSONStream.parse([ 'gravatar_id' ]);
+
+        var parser = JSONStream.parse([ 'avatar_url' ]);
         parser.on('error', output.emit.bind(output, 'error'));
-        
+
         var got = false;
-        hq.pipe(parser).pipe(through(function (id) {
+        hq.pipe(parser).pipe(through(function (url) {
             if (got) return;
             got = true;
-            cb(id);
+            cb(url);
         }));
     }
-    
-    function getImage (id) {
-        var hq = hyperquest('http://gravatar.com/avatar/' + id + '?s=' + size);
+
+    function getImage (url) {
+        var hq = hyperquest(url + '?s=' + size);
         var ok = false;
         hq.on('response', function (res) {
             ok = /^2/.test(res.statusCode);
@@ -61,7 +61,7 @@ module.exports = function (user, opts) {
         hq.pipe(output);
         hq.pipe(concat(function (body) {
             var row = {
-                id: id,
+                url: url,
                 last: Date.now(),
                 data: body.toString('base64'),
                 size: size
